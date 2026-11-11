@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: "Post the LIVE message now without checking"
+        description: "Tick to post the LIVE message now without checking TikTok"
         type: boolean
-        default: true
+        default: false
 permissions:
   contents: write
 concurrency: state-file
