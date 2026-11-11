@@ -1,0 +1,28 @@
+name: Post recipe
+on:
+  schedule:
+    - cron: "0 6 * * *"   # 9:00 AM Kuwait time, every day
+  workflow_dispatch: {}    # "Run workflow" button = post one now
+permissions:
+  contents: write
+concurrency: state-file
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python bot.py recipe
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          RECIPE_TOPIC_ID: ${{ secrets.RECIPE_TOPIC_ID }}
+          TIKTOK_USER: bo.alwafa
+      - name: Save which recipe is next
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || (git commit -m "next recipe" && git push)
