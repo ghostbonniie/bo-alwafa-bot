@@ -121,6 +121,9 @@ def check_tiktok_live():
         room_id = str(user.get("roomId") or room.get("roomId") or "")
         # status 2 = live, 4 = ended
         status = user.get("status") or room.get("status")
+        print(f"tiktok api: user.status={user.get('status')} "
+              f"liveRoom.status={room.get('status')} roomId={room_id} "
+              f"statusCode={data.get('statusCode')}")
         if status is not None:
             return status == 2 and bool(room_id), room_id
     except Exception as e:
