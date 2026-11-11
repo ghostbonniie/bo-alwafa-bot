@@ -2,7 +2,7 @@
 
 What it does:
 - **LIVE topic:** checks TikTok every 10 minutes. When @bo.alwafa goes LIVE it posts one message with the link (once per LIVE, no repeats).
-- **Recipes topic:** posts one coffee recipe every day at 9:00 AM Kuwait time, from `recipes.json` (14 recipes, then it starts again).
+- **Recipes topic:** posts one new xBloom recipe every day at 9:00 AM Kuwait time, from `recipes.json`. Each recipe posts once; when the list runs out it waits until you add more.
 - Cost: free. It runs on GitHub Actions, so your PC does not need to be on.
 
 Total setup time: about 20 minutes.
@@ -59,7 +59,7 @@ If both arrive, you are done. It now runs on its own.
 ## Daily use
 - **Going LIVE:** do nothing, the alert posts within about 10 to 15 minutes.
 - **Want the alert instantly?** Open the GitHub app on your phone > repo > Actions > TikTok LIVE alert > Run workflow. Takes 10 seconds and posts right away.
-- **Change recipes:** edit `recipes.json` on GitHub. Same shape as the others: title, ingredients, steps, tip.
+- **Add xBloom recipes:** edit `recipes.json` on GitHub and add a new `{"text": "..."}` entry with the share text from the xBloom app (use `\n` for a new line). Or just send the share text to Claude.
 - **Change recipe time:** in `.github/workflows/recipes.yml` change `0 6 * * *`. The time is UTC, Kuwait is UTC+3, so 06:00 UTC = 9:00 AM. For 7:00 PM use `0 16 * * *`. For two a day: `0 6,16 * * *`.
 - **Change the LIVE message text:** in `bot.py`, function `live_message`.
 

@@ -2,10 +2,10 @@
 bo.alwafa Telegram bot
 Posts into two topics of one Telegram group:
   1) LIVE topic: a message when @bo.alwafa goes LIVE on TikTok
-  2) Recipes topic: one coffee recipe on a schedule
+  2) Recipes topic: one xBloom recipe on a schedule (from recipes.json)
 
 Usage:
-  python bot.py recipe        -> post today's recipe
+  python bot.py recipe        -> post the next new xBloom recipe
   python bot.py live          -> check TikTok, post once if LIVE
   python bot.py live --force  -> post the LIVE message now (manual button)
   python bot.py ids           -> print group id and topic ids (setup helper)
@@ -81,27 +81,27 @@ def http_get(url):
 
 
 # ---------- recipes ----------
-def format_recipe(r):
-    lines = [f"☕ <b>{r['title']}</b>", ""]
-    if r.get("intro"):
-        lines += [r["intro"], ""]
-    lines.append("<b>المكونات:</b>")
-    lines += [f"• {x}" for x in r["ingredients"]]
-    lines += ["", "<b>الطريقة:</b>"]
-    lines += [f"{i}. {s}" for i, s in enumerate(r["steps"], 1)]
-    if r.get("tip"):
-        lines += ["", f"💡 {r['tip']}"]
-    lines += ["", f"📲 تابعونا: tiktok.com/@{TIKTOK_USER}"]
-    return "\n".join(lines)
-
-
+# recipes.json is a list of xBloom recipes. Each one has a "text" field:
+# paste the share text from the xBloom app exactly as you want it posted.
+# Each recipe is posted once, in order. When the list runs out the bot
+# waits quietly until you add more (no repeats).
 def post_recipe():
     recipes = json.loads(RECIPES_FILE.read_text(encoding="utf-8"))
     state = load_state()
-    i = state.get("recipe_index", 0) % len(recipes)
-    send(RECIPE_TOPIC_ID, format_recipe(recipes[i]))
-    state["recipe_index"] = (i + 1) % len(recipes)
-    if not DRY:
+    i = state.get("recipe_index", 0)
+    if i >= len(recipes):
+        print(f"no new recipes ({len(recipes)} already posted), add more to recipes.json")
+        return
+    text = recipes[i]["text"]
+    if DRY:
+        print(f"--- would send to topic {RECIPE_TOPIC_ID} ---\n{text}\n")
+    else:
+        params = {"chat_id": CHAT_ID, "text": text,
+                  "disable_web_page_preview": "false"}
+        if RECIPE_TOPIC_ID:
+            params["message_thread_id"] = RECIPE_TOPIC_ID
+        tg("sendMessage", **params)
+        state["recipe_index"] = i + 1
         save_state(state)
     print(f"posted recipe {i + 1}/{len(recipes)}")
 
