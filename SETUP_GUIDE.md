@@ -67,3 +67,24 @@ If both arrive, you are done. It now runs on its own.
 - TikTok has no official "is LIVE" API, so the bot reads the same public data the TikTok website uses. If TikTok changes it, the auto alert can stop working; the manual Run workflow button keeps working no matter what.
 - GitHub's timer can run a few minutes late at busy times. That is normal.
 - GitHub pauses timers on repos with no activity for 60 days. The bot saves a small file every day, which should keep it active. If GitHub ever emails you that a workflow was disabled, open the Actions tab and press Enable.
+
+---
+
+## Recipe picker (country > brand > bean > xBloom link)
+Someone writes `/recipe` or `وصفة` in the group, and the bot replies with buttons. All picker recipes live in `library.json`:
+```
+{"country": "Yemen", "brand": "Hoy 8", "bean": "Haraz", "link": "https://share-h5.xbloom.com/...", "note": "optional tip"}
+```
+It runs on Vercel (free) so the buttons answer instantly.
+
+One time setup:
+1. Go to vercel.com and sign up with **Continue with GitHub**.
+2. Add New > Project > Import `bo-alwafa-bot`.
+3. Open **Environment Variables**, add `TELEGRAM_TOKEN` with your bot token, then press **Deploy**.
+4. Copy your site address, for example `bo-alwafa-bot.vercel.app`.
+5. In your browser open (put your token and address in):
+   `https://api.telegram.org/botYOUR_TOKEN/setWebhook?url=https://YOUR_ADDRESS/api/webhook`
+   It should say "Webhook was set".
+6. Write `وصفة` in the group to test.
+
+Every change to `library.json` on GitHub goes live by itself in about a minute.
